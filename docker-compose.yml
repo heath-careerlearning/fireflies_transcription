@@ -1,12 +1,24 @@
 services:
-  video-processor:
-    build: .
+  transcription:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transcription
     volumes:
-      - ./data/videos:/data/videos
-      - ./data/transcripts:/data/transcripts
+      - /volume1/docker/careerlearning/transcription/videos:/data/videos
+      - /volume1/docker/careerlearning/transcription/transcripts:/data/transcripts
+      - /volume1/docker/careerlearning/transcription/temp:/data/temp
     environment:
-      - BASE_URL=YOUR_BASE_URL  # Replace with your actual base URL
+      - PYTHONUNBUFFERED=1
       - DOWNLOAD_DIR=/data/videos
       - TRANSCRIPT_DIR=/data/transcripts
+      - TEMP_DIR=/data/temp
       - WHISPER_MODEL=base
-    restart: unless-stopped 
+      - SERVICE_NAME=transcription
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os; assert os.path.exists('/data/videos') and os.path.exists('/data/transcripts')"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 5s 

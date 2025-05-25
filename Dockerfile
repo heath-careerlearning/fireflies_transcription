@@ -25,6 +25,11 @@ ENV PYTHONUNBUFFERED=1
 ENV DOWNLOAD_DIR=/data/videos
 ENV TRANSCRIPT_DIR=/data/transcripts
 ENV WHISPER_MODEL=base
+ENV SERVICE_NAME=transcription
+
+# Add healthcheck
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD python -c "import os; assert os.path.exists('/data/videos') and os.path.exists('/data/transcripts')"
 
 # Run the application
-CMD ["python", "process_videos.py"] 
+CMD ["python", "src/process_videos.py"] 

@@ -2,7 +2,41 @@ import whisper
 import argparse
 from pathlib import Path
 import concurrent.futures
-from typing import List, Optional
+from typing import List, Optional, Dict
+
+def transcribe_audio_with_timestamps(audio_path: str, model_name: str = "base", language: Optional[str] = None) -> Dict:
+    """
+    Transcribe an audio file using OpenAI's Whisper model with timestamps and language detection.
+    
+    Args:
+        audio_path (str): Path to the audio file
+        model_name (str): Name of the Whisper model to use (tiny, base, small, medium, large)
+        language (str, optional): Language code (e.g., 'en' for English). If None, auto-detects.
+        
+    Returns:
+        Dict containing:
+        - text: The full transcript
+        - segments: List of segments with timestamps
+        - language: Detected language
+    """
+    # Validate audio file exists
+    audio_path = Path(audio_path)
+    if not audio_path.exists():
+        raise FileNotFoundError(f"Audio file not found: {audio_path}")
+    
+    # Load the model
+    print(f"Loading {model_name} model...")
+    model = whisper.load_model(model_name)
+    
+    # Transcribe the audio with verbose output and language detection
+    print(f"Transcribing {audio_path}...")
+    result = model.transcribe(
+        str(audio_path),
+        language=language,
+        verbose=True  # Shows progress
+    )
+    
+    return result
 
 def transcribe_audio(audio_path: str, model_name: str = "base") -> str:
     """
