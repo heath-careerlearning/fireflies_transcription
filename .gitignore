@@ -37,3 +37,4 @@ wheels/
 *.log
 !requirements.txt
 .env
+data/
