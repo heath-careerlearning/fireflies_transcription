@@ -1,0 +1,12 @@
+services:
+  video-processor:
+    build: .
+    volumes:
+      - ./data/videos:/data/videos
+      - ./data/transcripts:/data/transcripts
+    environment:
+      - BASE_URL=YOUR_BASE_URL  # Replace with your actual base URL
+      - DOWNLOAD_DIR=/data/videos
+      - TRANSCRIPT_DIR=/data/transcripts
+      - WHISPER_MODEL=base
+    restart: unless-stopped 
