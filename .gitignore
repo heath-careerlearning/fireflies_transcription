@@ -35,6 +35,5 @@ wheels/
 
 # Project specific
 *.log
-*.txt
 !requirements.txt
 .env
