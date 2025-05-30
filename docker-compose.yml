@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
     container_name: transcription
     volumes:
-      - /volume1/docker/careerlearning/transcription/videos:/data/videos
-      - /volume1/docker/careerlearning/transcription/transcripts:/data/transcripts
-      - /volume1/docker/careerlearning/transcription/temp:/data/temp
+      - ./data/videos:/data/videos
+      - ./data/transcripts:/data/transcripts
+      - ./data/temp:/data/temp
     environment:
       - PYTHONUNBUFFERED=1
       - DOWNLOAD_DIR=/data/videos
@@ -20,5 +20,28 @@ services:
       test: ["CMD", "python", "-c", "import os; assert os.path.exists('/data/videos') and os.path.exists('/data/transcripts')"]
       interval: 30s
       timeout: 30s
+      retries: 3
+      start_period: 5s
+
+  transcribe:
+    build:
+      context: .
+      dockerfile: Dockerfile.transcribe
+    container_name: transcribe
+    volumes:
+      - ./data/videos:/data/videos
+      - ./data/transcripts:/data/transcripts
+      - ./data/tracking:/data/tracking
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DOWNLOAD_DIR=/data/videos
+      - TRANSCRIPT_DIR=/data/transcripts
+      - TRACKING_DIR=/data/tracking
+      - WHISPER_MODEL=base
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "test", "-d", "/data/videos", "&&", "test", "-d", "/data/transcripts", "&&", "test", "-d", "/data/tracking"]
+      interval: 30s
+      timeout: 10s
       retries: 3
       start_period: 5s 
