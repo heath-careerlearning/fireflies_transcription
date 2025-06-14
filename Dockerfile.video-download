@@ -31,7 +31,7 @@ ENV DOWNLOAD_DIR=/data/videos
 ENV TRANSCRIPT_DIR=/data/transcripts
 ENV TRACKING_DIR=/data/tracking
 ENV WHISPER_MODEL=base
-ENV SERVICE_NAME=transcription
+ENV SERVICE_NAME=video-download
 
 # Add healthcheck
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \

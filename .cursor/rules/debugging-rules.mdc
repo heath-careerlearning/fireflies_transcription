@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+You MUST NOT say "Now I see what's actually happening" or anything similar
+You MUST NOT say "I see the issue"
+You MUST work on a hypothesis basis. You have an idea of what MIGHT be wrong and then see how you'll test it.
+Even after you believe you have solved the issue, you assume you are WRONG.
+NEVER under any circumstances will you do docker compose down. or docker compose up. There are many services on docker, you MUST be specific. 

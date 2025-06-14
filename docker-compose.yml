@@ -1,47 +1,44 @@
+name: video_transcription
 services:
-  transcription:
+  video-download:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: transcription
+      dockerfile: Dockerfile.video-download
+    container_name: video-download
     volumes:
-      - ./data/videos:/data/videos
-      - ./data/transcripts:/data/transcripts
-      - ./data/temp:/data/temp
+      - /volume1/docker/careerlearning/transcription/videos:/data/videos
+      - /volume1/docker/careerlearning/transcription/tracking:/data/tracking
     environment:
       - PYTHONUNBUFFERED=1
       - DOWNLOAD_DIR=/data/videos
-      - TRANSCRIPT_DIR=/data/transcripts
-      - TEMP_DIR=/data/temp
-      - WHISPER_MODEL=base
-      - SERVICE_NAME=transcription
-    restart: unless-stopped
+      - TRACKING_DIR=/data/tracking
+      - SERVICE_NAME=video-download
     healthcheck:
-      test: ["CMD", "python", "-c", "import os; assert os.path.exists('/data/videos') and os.path.exists('/data/transcripts')"]
+      test: ["CMD", "python", "-c", "import os; assert os.path.exists('/data/videos')"]
       interval: 30s
       timeout: 30s
       retries: 3
       start_period: 5s
 
-  transcribe:
+  transcription:
     build:
       context: .
       dockerfile: Dockerfile.transcribe
-    container_name: transcribe
+    container_name: transcription
     volumes:
-      - ./data/videos:/data/videos
-      - ./data/transcripts:/data/transcripts
-      - ./data/tracking:/data/tracking
+      - /volume1/docker/careerlearning/transcription/videos:/data/videos
+      - /volume1/docker/careerlearning/transcription/transcripts:/data/transcripts
+      - /volume1/docker/careerlearning/transcription/tracking:/data/tracking
     environment:
       - PYTHONUNBUFFERED=1
       - DOWNLOAD_DIR=/data/videos
       - TRANSCRIPT_DIR=/data/transcripts
       - TRACKING_DIR=/data/tracking
       - WHISPER_MODEL=base
-    restart: unless-stopped
+      - SERVICE_NAME=transcription
     healthcheck:
-      test: ["CMD", "test", "-d", "/data/videos", "&&", "test", "-d", "/data/transcripts", "&&", "test", "-d", "/data/tracking"]
+      test: ["CMD", "python", "-c", "import os; assert os.path.exists('/data/videos') and os.path.exists('/data/transcripts')"]
       interval: 30s
-      timeout: 10s
+      timeout: 30s
       retries: 3
       start_period: 5s 

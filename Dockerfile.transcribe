@@ -17,18 +17,18 @@ COPY src/transcribe_service.py src/
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Create data directories
-RUN mkdir -p /data/videos /data/transcripts /data/tracking
+RUN mkdir -p /data/videos /data/transcripts /data/temp
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV DOWNLOAD_DIR=/data/videos
 ENV TRANSCRIPT_DIR=/data/transcripts
-ENV TRACKING_DIR=/data/tracking
+ENV TRACKING_DIR=/data/temp
 ENV WHISPER_MODEL=base
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD test -d /data/videos && test -d /data/transcripts && test -d /data/tracking
+    CMD test -d /data/videos && test -d /data/transcripts && test -d /data/temp
 
 # Run the transcription service
 CMD ["python", "src/transcribe_service.py"]
